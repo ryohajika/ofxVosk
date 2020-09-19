@@ -8,4 +8,10 @@ Both [Vosk](https://github.com/alphacep/vosk-api) and [Kaldi](https://github.com
 ## Supported platform (so far)
 - MacOSX 10.14 (Mojave), oF 0.11.0 (release)
 
-
+## How to use this?
+### OSX (example)
+- You will get all the libraries and source code by cloning this repo from command line.
+` git clone https://github.com/ryohajika/ofxVosk `
+- Go to [VoskAPI's website](https://alphacephei.com/vosk/models) and download one of these the models available on the website  you want to use. (in the example project I used "vosk-model-small-en-us-0.3")
+- Unpack the zipped model file and place it to `examples/bin/data`
+- Run the project in Xcode
