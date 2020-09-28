@@ -13,6 +13,7 @@ class ofxVosk : public ofThread {
 
         bool setup(std::string full_path_to_model, float sampling_rate, unsigned buffer_size);
         bool isVoskInitialized();
+        void setRealtimeResultCallback(bool value);
 
         void startRec();
         void stopRec();
@@ -25,6 +26,8 @@ class ofxVosk : public ofThread {
         std::string getPartialResultText();
         ofJson getResultJson();
         std::string getResultText();
+    
+        ofEvent<std::string> realtime_result_text_evt;
 
     private:
         void threadedFunction();
@@ -44,4 +47,5 @@ class ofxVosk : public ofThread {
         ofJson halfway_result;
         ofJson partial_result;
         ofJson final_result;
+        bool bRealtimeCbEnabled;
 };

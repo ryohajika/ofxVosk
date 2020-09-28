@@ -7,6 +7,7 @@ ofxVosk::ofxVosk(){
     vosk_model = nullptr;
     vosk_recognizer = nullptr;
     sound_buffer = nullptr;
+    bRealtimeCbEnabled = false;
 }
 ofxVosk::~ofxVosk(){
     std::unique_lock<std::mutex> lock(mutex);
@@ -54,6 +55,9 @@ bool ofxVosk::setup(std::string full_path_to_model, float sampling_rate, unsigne
 bool ofxVosk::isVoskInitialized(){
     return b_vosk_init;
 }
+void ofxVosk::setRealtimeResultCallback(bool value){
+    bRealtimeCbEnabled = value;
+}
 
 void ofxVosk::startRec(){
     halfway_result = "";
@@ -98,6 +102,10 @@ void ofxVosk::threadedFunction(){
         }else{
             std::string str(vosk_recognizer_partial_result(vosk_recognizer));
             partial_result = operator""_json(str.c_str(), str.size());
+            if(bRealtimeCbEnabled){
+                std::string msg = this->getPartialResultText();
+                ofNotifyEvent(realtime_result_text_evt, msg);
+            }
 #ifdef DEBUG_MODE
             cout << vosk_smpl_buffer.size() << ", " << str << endl;
 #endif
