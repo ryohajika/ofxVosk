@@ -70,6 +70,9 @@ void ofxVosk::stopRec(){
     stopThread();
     condition.notify_one();
     
+    this->clearBuffer();
+}
+void ofxVosk::clearBuffer(){
     std::string str(vosk_recognizer_final_result(vosk_recognizer));
     final_result = operator""_json(str.c_str(), str.size());
 #ifdef DEBUG_MODE
@@ -87,6 +90,8 @@ void ofxVosk::update(ofSoundBuffer * input){
 void ofxVosk::threadedFunction(){
     while(isThreadRunning()){
         std::unique_lock<std::mutex> lock(mutex);
+        bool b_is_any_text = false;
+        
         for(std::size_t i=0; i<vosk_smpl_buffer_size; i++){
             vosk_smpl_buffer[i] = sound_buffer->getBuffer()[i] * float(std::numeric_limits<short>::max());
         }
@@ -102,15 +107,16 @@ void ofxVosk::threadedFunction(){
         }else{
             std::string str(vosk_recognizer_partial_result(vosk_recognizer));
             partial_result = operator""_json(str.c_str(), str.size());
-            if(bRealtimeCbEnabled){
-                std::string msg = this->getPartialResultText();
-                ofNotifyEvent(realtime_result_text_evt, msg);
-            }
+            if(!str.empty()) b_is_any_text = true;
 #ifdef DEBUG_MODE
             cout << vosk_smpl_buffer.size() << ", " << str << endl;
 #endif
         }
         condition.wait(lock);
+        if(bRealtimeCbEnabled == true && b_is_any_text == true){
+            std::string msg = "";
+            ofNotifyEvent(realtime_result_text_evt, msg);
+        }
     }
 }
 

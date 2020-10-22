@@ -4,7 +4,7 @@
 #include <atomic>
 #include "vosk_api.h"
 
-#define DEBUG_MODE 1
+//#define DEBUG_MODE 1
 
 class ofxVosk : public ofThread {
     public:
@@ -18,6 +18,7 @@ class ofxVosk : public ofThread {
         void startRec();
         void stopRec();
         bool isInRecognition();
+        void clearBuffer();
         void update(ofSoundBuffer * input);
 
         ofJson getFinalResultJson();
